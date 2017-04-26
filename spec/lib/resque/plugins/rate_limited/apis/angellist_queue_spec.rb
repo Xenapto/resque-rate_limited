@@ -5,10 +5,6 @@ class RateLimitedTestQueueAL
 end
 
 describe Resque::Plugins::RateLimited::AngellistQueue do
-  before do
-    # expect(Resque::Plugins::RateLimited::AngellistQueue).to receive(:paused?).at_least(:once) # .and_return(false)
-  end
-
   describe 'enqueue' do
     it 'enqueues to the correct queue with the correct parameters' do
       expect(Resque).to receive(:enqueue_to).with(

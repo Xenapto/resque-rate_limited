@@ -203,7 +203,7 @@ describe Resque::Plugins::RateLimited do
 
   describe 'paused?' do
     context 'with paused queue' do
-      it 'should return the true if the paused queue exists' do
+      it 'should return true if the paused queue exists' do
         expect(Resque.redis).to receive(:exists)
           .with("queue:#{RateLimitedTestQueue.queue_name_private}_paused")
           .and_return(true)

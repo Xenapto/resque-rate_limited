@@ -7,16 +7,16 @@ end
 describe Resque::Plugins::RateLimited::UnPause do
   describe 'perform' do
     it 'unpauses the queue' do
-      RateLimitedTestQueue.should_receive(:un_pause)
+      expect(RateLimitedTestQueue).to receive(:un_pause)
       Resque::Plugins::RateLimited::UnPause.perform(RateLimitedTestQueue)
     end
   end
 
   describe 'enqueue' do
-    before { Resque.stub(:respond_to?).and_return(true) }
+    before { allow(Resque).to receive(:respond_to?).and_return(true) }
     context 'with no queue defined' do
       it 'does not queue the job' do
-        Resque.should_not_receive(:enqueue_at_with_queue)
+        expect(Resque).not_to receive(:enqueue_at_with_queue)
         Resque::Plugins::RateLimited::UnPause.enqueue(Time.now, RateLimitedTestQueue)
       end
     end
@@ -24,7 +24,7 @@ describe Resque::Plugins::RateLimited::UnPause do
     context 'with queue defined' do
       before { Resque::Plugins::RateLimited::UnPause.queue = :queue_name }
       it 'queues the job' do
-        Resque.should_receive(:enqueue_at_with_queue).with(
+        expect(Resque).to receive(:enqueue_at_with_queue).with(
           :queue_name,
           nil,
           Resque::Plugins::RateLimited::UnPause,

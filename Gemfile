@@ -1,4 +1,21 @@
 source 'https://rubygems.org'
-
-# Specify your gem's dependencies in resque_rate_limited.gemspec
 gemspec
+ruby RUBY_VERSION
+
+group :development do
+  gem 'bundler'
+  gem 'gem-release'
+  gem 'github_changelog_generator'
+  gem 'guard'
+  gem 'guard-rspec'
+  gem 'guard-rubocop'
+end
+
+group :test do
+  gem 'codeclimate-test-reporter'
+  gem 'coveralls'
+  gem 'fuubar'
+  gem 'rspec'
+  gem 'rspec_junit_formatter'
+  gem 'simplecov'
+end

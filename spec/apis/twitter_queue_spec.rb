@@ -3,19 +3,19 @@ require 'resque/rate_limited'
 
 class RateLimitedTestQueueTw
   def self.perform(succeed)
-    raise(Twitter::Error::TooManyRequests
-      .new('', 'x-rate-limit-reset' => (Time.now + 60).to_i)) unless succeed
+    return if succeed
+    raise(Twitter::Error::TooManyRequests.new('', 'x-rate-limit-reset' => (Time.now + 60).to_i))
   end
 end
 
 describe Resque::Plugins::RateLimited::TwitterQueue do
   before do
-    Resque::Plugins::RateLimited::TwitterQueue.stub(:paused?).and_return(false)
+    allow(Resque::Plugins::RateLimited::TwitterQueue).to receive(:paused?).and_return(false)
   end
 
   describe 'enqueue' do
     it 'enqueues to the correct queue with the correct parameters' do
-      Resque.should_receive(:enqueue_to).with(
+      expect(Resque).to receive(:enqueue_to).with(
         :twitter_api,
         Resque::Plugins::RateLimited::TwitterQueue,
         RateLimitedTestQueueTw.to_s,
@@ -32,7 +32,7 @@ describe Resque::Plugins::RateLimited::TwitterQueue do
     end
     context 'with everything' do
       it 'calls the class with the right parameters' do
-        RateLimitedTestQueueTw.should_receive(:perform).with('test_param')
+        expect(RateLimitedTestQueueTw).to receive(:perform).with('test_param')
         Resque::Plugins::RateLimited::TwitterQueue
           .enqueue(RateLimitedTestQueueTw, 'test_param')
       end
@@ -40,10 +40,10 @@ describe Resque::Plugins::RateLimited::TwitterQueue do
 
     context 'with rate limit exception' do
       before do
-        Resque::Plugins::RateLimited::TwitterQueue.stub(:rate_limited_requeue)
+        allow(Resque::Plugins::RateLimited::TwitterQueue).to receive(:rate_limited_requeue)
       end
       it 'pauses queue when request fails' do
-        Resque::Plugins::RateLimited::TwitterQueue.should_receive(:pause_until)
+        expect(Resque::Plugins::RateLimited::TwitterQueue).to receive(:pause_until)
         Resque::Plugins::RateLimited::TwitterQueue
           .enqueue(RateLimitedTestQueueTw, false)
       end

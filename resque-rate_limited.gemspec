@@ -27,5 +27,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'redis-mutex', '~> 4.0', '>= 4.0.0'
   spec.add_dependency 'angellist_api', '~> 1.0', '>= 1.0.7'
   spec.add_dependency 'evernote-thrift', '~> 1.25', '>= 1.25.1'
-  spec.add_dependency 'twitter', '~> 5.11', '>= 5.11.0'
+  spec.add_dependency 'twitter', '~> 6' # , '>= 5.11.0'
 end

@@ -1,4 +1,4 @@
-## Resque Rate Limited
+## Resque rate-limited
 
 [![Gem version](https://badge.fury.io/rb/resque-rate_limited.svg)](https://rubygems.org/gems/resque-rate_limited)
 [![Gem downloads](https://img.shields.io/gem/dt/resque-rate_limited.svg)](https://rubygems.org/gems/resque-rate_limited)
@@ -8,15 +8,14 @@
 [![Dependency Status](https://gemnasium.com/badges/github.com/Xenapto/resque-rate_limited.svg)](https://gemnasium.com/github.com/Xenapto/resque-rate_limited)
 [![Security](https://hakiri.io/github/Xenapto/resque-rate_limited/master.svg)](https://hakiri.io/github/Xenapto/resque-rate_limited/master)
 
-A Resque plugin which makes handling jobs that use rate limited APIs easier
+A Resque plugin which makes handling jobs that use rate-limited APIs easier
 
 If you have a series of jobs in a queue, this gem will pause the queue when one of the jobs hits a rate limit, and re-start the queue when the rate limit has expired.
 
-There are two ways to use the gem.
+There are two ways to use the gem:
 
-If the API you are using has a dedicated queue included in the gem (currently Twitter, Angellist and Evernote) then you just need to make some very minor changes to how you queue jobs, and the gem will do the rest.
-
-If you are using another API, then you need to write a little code that catches the rate limit signal.
+1.  If the API you are using has a dedicated queue included in the gem (currently Twitter, Angellist and Evernote) then you just need to make some very minor changes to how you queue jobs, and the gem will do the rest.
+1.  If you are using another API, then you need to write a little code that catches the rate limit signal.
 
 ## Installation
 
@@ -89,11 +88,11 @@ MyQueue.un_pause
 MyJob.un_pause
 ```
 ### A pausable job using one of the build-in queues (Twitter, Angellist, Evernote)
-If you're using the [twitter gem](https://github.com/sferik/twitter), this is really simple. Instead of queuing using Resque.enqueue, you just use Resque::Plugins::RateLimited:TwitterQueue.enqueue.
+If you're using the [twitter gem](https://github.com/sferik/twitter), this is really simple. Instead of queuing using `Resque.enqueue`, you just use `Resque::Plugins::RateLimited:TwitterQueue.enqueue`.
 
-Make sure your code in perform doesn't catch the rate_limit exception.
+Make sure your code in perform doesn't catch the rate limit exception.
 
-The TwitterQueue will catch the exception and pause the queue (as well as re-scheduling the jobs and scheduling an un pause (if you are using resque-scheduler)). Any jobs you add while the queue is paused will be added to the paused queue
+The TwitterQueue will catch the exception and pause the queue (as well as re-scheduling the jobs and scheduling an un pause (if you are using `resque-scheduler`)). Any jobs you add while the queue is paused will be added to the paused queue
 
 ```ruby
 class TwitterJob
@@ -110,7 +109,7 @@ end
 ```
 
 ### A single class of pausable job using a new API
-If you only have one class of job you want to queue using the API, then you can use the PauseQueue module directly
+If you only have one class of job you want to queue using the API, then you can use the `PauseQueue` module directly
 
 ```ruby
 class MyApiJob
@@ -212,9 +211,6 @@ Takes the parameter passed, and if it's a string class name, tries to turn it in
 0.0.x Mostly pre-release versions
 
 1.0.0 First release version. Breaking change - renamed  `pause_for` to be `pause_until` to better reflect function
-
-
-
 
 ## Final thoughts
 Thanks to [Dominic](https://github.com/dominicsayers) for idea of renaming the redis key - and the sample code that does this.

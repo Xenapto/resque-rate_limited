@@ -45,9 +45,10 @@ Style/PercentLiteralDelimiters:
     '%w': '[]'
     '%W': '[]'
 
-#-------------------------------------------------------------------------------
-# These rules have been relaxed because of existing code
-# We should tighten these up over time
-#-------------------------------------------------------------------------------
-# LineLength:
-#   Max: 166 # project standard is 120
+Metrics/LineLength:
+  Max: 120
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*_spec.rb'
+    - '*.gemspec'

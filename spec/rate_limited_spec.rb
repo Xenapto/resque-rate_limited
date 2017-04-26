@@ -26,7 +26,12 @@ describe Resque::Plugins::RateLimited do
 
   shared_examples_for 'queue' do |queue_suffix|
     it 'should queue to the correct queue' do
-      queue_param = queue_suffix.empty? ? RateLimitedTestQueue.queue_private : "#{RateLimitedTestQueue.queue_name_private}#{queue_suffix}"
+      queue_param = if queue_suffix.empty?
+                      RateLimitedTestQueue.queue_private
+                    else
+                      "#{RateLimitedTestQueue.queue_name_private}#{queue_suffix}"
+                    end
+
       expect(Resque).to receive(:enqueue_to).with(queue_param, nil, nil)
       RateLimitedTestQueue.rate_limited_enqueue(nil, nil)
     end
@@ -59,14 +64,20 @@ describe Resque::Plugins::RateLimited do
 
     describe 'pause' do
       it 'should rename the queue to paused' do
-        expect(Resque.redis).to receive(:renamenx).with("queue:#{RateLimitedTestQueue.queue_name_private}", "queue:#{RateLimitedTestQueue.queue_name_private}_paused")
+        expect(Resque.redis).to receive(:renamenx).with(
+          "queue:#{RateLimitedTestQueue.queue_name_private}",
+          "queue:#{RateLimitedTestQueue.queue_name_private}_paused"
+        )
         RateLimitedTestQueue.pause
       end
     end
 
     describe 'un_pause' do
       it 'should not unpause the queue' do
-        expect(Resque.redis).not_to receive(:renamenx).with("queue:#{RateLimitedTestQueue.queue_name_private}", "queue:#{RateLimitedTestQueue.queue_name_private}_paused")
+        expect(Resque.redis).not_to receive(:renamenx).with(
+          "queue:#{RateLimitedTestQueue.queue_name_private}",
+          "queue:#{RateLimitedTestQueue.queue_name_private}_paused"
+        )
         RateLimitedTestQueue.un_pause
       end
     end
@@ -83,7 +94,7 @@ describe Resque::Plugins::RateLimited do
 
       it 'should schedule an unpause job' do
         expect(Resque::Plugins::RateLimited::UnPause).to receive(:enqueue)
-                                                  .with(nil, 'RateLimitedTestQueue')
+          .with(nil, 'RateLimitedTestQueue')
         RateLimitedTestQueue.pause_until(nil)
       end
     end
@@ -104,7 +115,12 @@ describe Resque::Plugins::RateLimited do
 
     describe 'perform' do
       it 'should not execute the block' do
-        expect(Resque).to receive(:enqueue_to).with("#{RateLimitedTestQueue.queue_name_private}_paused", RateLimitedTestQueue, true)
+        expect(Resque).to receive(:enqueue_to).with(
+          "#{RateLimitedTestQueue.queue_name_private}_paused",
+          RateLimitedTestQueue,
+          true
+        )
+
         expect(RateLimitedTestQueue).not_to receive(:perform)
         RateLimitedTestQueue.around_perform_with_check_and_requeue(true)
       end
@@ -112,7 +128,11 @@ describe Resque::Plugins::RateLimited do
 
     describe 'un_pause' do
       it 'should rename the queue to live' do
-        expect(Resque.redis).to receive(:renamenx).with("queue:#{RateLimitedTestQueue.queue_name_private}_paused", "queue:#{RateLimitedTestQueue.queue_name_private}")
+        expect(Resque.redis).to receive(:renamenx).with(
+          "queue:#{RateLimitedTestQueue.queue_name_private}_paused",
+          "queue:#{RateLimitedTestQueue.queue_name_private}"
+        )
+
         RateLimitedTestQueue.un_pause
       end
     end
@@ -208,8 +228,13 @@ describe Resque::Plugins::RateLimited do
   describe 'paused?' do
     context 'with paused queue' do
       before do
-        allow(Resque.redis).to receive(:exists).with("queue:#{RateLimitedTestQueue.queue_name_private}_paused").and_return(true)
-        allow(Resque.redis).to receive(:exists).with("queue:#{RateLimitedTestQueue.queue_name_private}").and_return(false)
+        allow(Resque.redis).to receive(:exists)
+          .with("queue:#{RateLimitedTestQueue.queue_name_private}_paused")
+          .and_return(true)
+
+        allow(Resque.redis).to receive(:exists)
+          .with("queue:#{RateLimitedTestQueue.queue_name_private}")
+          .and_return(false)
       end
 
       it 'should return the true if the paused queue exists' do
@@ -219,8 +244,13 @@ describe Resque::Plugins::RateLimited do
 
     context 'with un paused queue' do
       before do
-        allow(Resque.redis).to receive(:exists).with("queue:#{RateLimitedTestQueue.queue_name_private}_paused").and_return(false)
-        allow(Resque.redis).to receive(:exists).with("queue:#{RateLimitedTestQueue.queue_name_private}").and_return(true)
+        allow(Resque.redis).to receive(:exists)
+          .with("queue:#{RateLimitedTestQueue.queue_name_private}_paused")
+          .and_return(false)
+
+        allow(Resque.redis).to receive(:exists)
+          .with("queue:#{RateLimitedTestQueue.queue_name_private}")
+          .and_return(true)
       end
 
       it 'should return the false if the main queue exists exist' do
@@ -230,8 +260,13 @@ describe Resque::Plugins::RateLimited do
 
     context 'with unknown queue state' do
       before do
-        allow(Resque.redis).to receive(:exists).with("queue:#{RateLimitedTestQueue.queue_name_private}_paused").and_return(false)
-        allow(Resque.redis).to receive(:exists).with("queue:#{RateLimitedTestQueue.queue_name_private}").and_return(false)
+        allow(Resque.redis).to receive(:exists)
+          .with("queue:#{RateLimitedTestQueue.queue_name_private}_paused")
+          .and_return(false)
+
+        allow(Resque.redis).to receive(:exists)
+          .with("queue:#{RateLimitedTestQueue.queue_name_private}")
+          .and_return(false)
       end
 
       it 'should return the default' do

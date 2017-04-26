@@ -8,13 +8,13 @@
 [![Dependency Status](https://gemnasium.com/badges/github.com/Xenapto/resque-rate_limited.svg)](https://gemnasium.com/github.com/Xenapto/resque-rate_limited)
 [![Security](https://hakiri.io/github/Xenapto/resque-rate_limited/master.svg)](https://hakiri.io/github/Xenapto/resque-rate_limited/master)
 
-A Resque plugin which makes handling jobs that use rate limited apis easier
+A Resque plugin which makes handling jobs that use rate limited APIs easier
 
 If you have a series of jobs in a queue, this gem will pause the queue when one of the jobs hits a rate limit, and re-start the queue when the rate limit has expired.
 
 There are two ways to use the gem.
 
-If the api you are using has a dedicated queue included in the gem (currently Twitter, Angellist and Evernote) then you just need to make some very minor changes to how you queue jobs, and the gem will do the rest.
+If the API you are using has a dedicated queue included in the gem (currently Twitter, Angellist and Evernote) then you just need to make some very minor changes to how you queue jobs, and the gem will do the rest.
 
 If you are using another API, then you need to write a little code that catches the rate limit signal.
 
@@ -109,8 +109,8 @@ class TwitterJob
 end
 ```
 
-### A single class of pausable job using a new api
-If you only have one class of job you want to queue using the api, then you can use the PauseQueue module directly
+### A single class of pausable job using a new API
+If you only have one class of job you want to queue using the API, then you can use the PauseQueue module directly
 
 ```ruby
 class MyApiJob
@@ -131,8 +131,8 @@ class MyApiJob
 end
 ````
 
-### Multiple classes of pausable job using a new api
-If you have more than one class of job you want to queue to the api, then you need to add another Queue class. This isn't hard
+### Multiple classes of pausable job using a new API
+If you have more than one class of job you want to queue to the API, then you need to add another Queue class. This isn't hard
 
 ```ruby
 class MyApiQueue < Resque::Plugins::RateLimited::BaseApiQueue

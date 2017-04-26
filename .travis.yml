@@ -1,4 +1,6 @@
 ---
+services:
+  - redis-server
 language: ruby
 dist: trusty
 rvm:

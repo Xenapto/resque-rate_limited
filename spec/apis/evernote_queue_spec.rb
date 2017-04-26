@@ -9,11 +9,13 @@ end
 
 class RateLimitedTestQueueEn
   def self.perform(succeed)
+    return if succeed
+
     raise(
       Evernote::EDAM::Error::EDAMSystemException,
       errorCode: Evernote::EDAM::Error::EDAMErrorCode::RATE_LIMIT_REACHED,
       rateLimitDuration: RateLimitDuration
-    ) unless succeed
+    )
   end
 end
 

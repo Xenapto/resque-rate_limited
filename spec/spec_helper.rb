@@ -1,18 +1,15 @@
-require 'rubygems'
-require 'bundler/setup'
+# Configure Simplecov and Coveralls
+unless ENV['NO_SIMPLECOV']
+  require 'simplecov'
+  require 'coveralls'
 
-require 'rspec'
-require 'redis-classy'
-require 'redis-mutex'
+  SimpleCov.start { add_filter '/spec/' }
+  Coveralls.wear! if ENV['COVERALLS_REPO_TOKEN']
+end
 
-require 'simplecov'
-
-SimpleCov.start
+require 'resque/rate_limited'
 
 RSpec.configure do |_config|
-  # Use database 15 for testing so we don't accidentally step on your real data.
-  RedisClassy.redis = Redis.new(db: 15)
-  unless RedisClassy.keys.empty?
-    abort '[ERROR]: Redis database 15 not empty! If you are sure, run "rake flushdb" beforehand.'
-  end
+  RedisClassy.redis = Redis.new(db: 15) # Use database 15 for testing so we don't accidentally step on your real data.
+  abort 'Redis database 15 not empty! If you are sure, run "rake flushdb" beforehand.' unless RedisClassy.keys.empty?
 end

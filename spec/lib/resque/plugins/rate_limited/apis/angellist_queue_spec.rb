@@ -1,6 +1,3 @@
-require 'spec_helper'
-require 'resque/rate_limited'
-
 class RateLimitedTestQueueAL
   def self.perform(succeed)
     raise(AngellistApi::Error::TooManyRequests, 'error') unless succeed
@@ -9,7 +6,7 @@ end
 
 describe Resque::Plugins::RateLimited::AngellistQueue do
   before do
-    allow(Resque::Plugins::RateLimited::AngellistQueue).to receive(:paused?).and_return(false)
+    # expect(Resque::Plugins::RateLimited::AngellistQueue).to receive(:paused?).at_least(:once) # .and_return(false)
   end
 
   describe 'enqueue' do
@@ -20,31 +17,27 @@ describe Resque::Plugins::RateLimited::AngellistQueue do
         RateLimitedTestQueueAL.to_s,
         true
       )
-      Resque::Plugins::RateLimited::AngellistQueue
-        .enqueue(RateLimitedTestQueueAL, true)
+
+      Resque::Plugins::RateLimited::AngellistQueue.enqueue(RateLimitedTestQueueAL, true)
     end
   end
 
   describe 'perform' do
-    before do
-      Resque.inline = true
-    end
+    before { Resque.inline = true }
+    after  { Resque.inline = false }
+
     context 'with everything' do
       it 'calls the class with the right parameters' do
         expect(RateLimitedTestQueueAL).to receive(:perform).with('test_param')
-        Resque::Plugins::RateLimited::AngellistQueue
-          .enqueue(RateLimitedTestQueueAL, 'test_param')
+        Resque::Plugins::RateLimited::AngellistQueue.enqueue(RateLimitedTestQueueAL, 'test_param')
       end
     end
 
     context 'with rate limit exception' do
-      before do
-        allow(Resque::Plugins::RateLimited::AngellistQueue).to receive(:rate_limited_requeue)
-      end
       it 'pauses queue when request fails' do
+        expect(Resque::Plugins::RateLimited::AngellistQueue).to receive(:rate_limited_requeue)
         expect(Resque::Plugins::RateLimited::AngellistQueue).to receive(:pause_until)
-        Resque::Plugins::RateLimited::AngellistQueue
-          .enqueue(RateLimitedTestQueueAL, false)
+        Resque::Plugins::RateLimited::AngellistQueue.enqueue(RateLimitedTestQueueAL, false)
       end
     end
   end

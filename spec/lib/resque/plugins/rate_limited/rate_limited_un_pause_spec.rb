@@ -1,6 +1,3 @@
-require 'spec_helper'
-require 'resque/rate_limited'
-
 class RateLimitedTestQueue
 end
 
@@ -13,17 +10,18 @@ describe Resque::Plugins::RateLimited::UnPause do
   end
 
   describe 'enqueue' do
-    before { allow(Resque).to receive(:respond_to?).and_return(true) }
     context 'with no queue defined' do
       it 'does not queue the job' do
+        expect(Resque).to receive(:respond_to?).exactly(3).times.and_return(true)
         expect(Resque).not_to receive(:enqueue_at_with_queue)
         Resque::Plugins::RateLimited::UnPause.enqueue(Time.now, RateLimitedTestQueue)
       end
     end
 
     context 'with queue defined' do
-      before { Resque::Plugins::RateLimited::UnPause.queue = :queue_name }
       it 'queues the job' do
+        Resque::Plugins::RateLimited::UnPause.queue = :queue_name
+
         expect(Resque).to receive(:enqueue_at_with_queue).with(
           :queue_name,
           nil,
@@ -41,6 +39,7 @@ describe Resque::Plugins::RateLimited::UnPause do
       expect(Resque::Plugins::RateLimited::UnPause.class_from_string(RateLimitedTestQueue.to_s))
         .to eq(RateLimitedTestQueue)
     end
+
     it 'converts qualified classes' do
       expect(Resque::Plugins::RateLimited::UnPause.class_from_string(Resque::Plugins::RateLimited::UnPause.to_s))
         .to eq(Resque::Plugins::RateLimited::UnPause)

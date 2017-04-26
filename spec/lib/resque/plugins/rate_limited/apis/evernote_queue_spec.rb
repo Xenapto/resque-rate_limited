@@ -1,6 +1,3 @@
-require 'spec_helper'
-require 'resque/rate_limited'
-
 class RateLimitDuration
   def self.seconds
     60
@@ -27,8 +24,9 @@ end
 
 describe Resque::Plugins::RateLimited::EvernoteQueue do
   before do
-    allow(Resque::Plugins::RateLimited::EvernoteQueue).to receive(:paused?).and_return(false)
+    expect(Resque::Plugins::RateLimited::EvernoteQueue).to receive(:paused?).at_least(:once).and_return(false)
   end
+
   describe 'enqueue' do
     it 'enqueues to the correct queue with the correct parameters' do
       expect(Resque).to receive(:enqueue_to).with(
@@ -43,9 +41,9 @@ describe Resque::Plugins::RateLimited::EvernoteQueue do
   end
 
   describe 'perform' do
-    before do
-      Resque.inline = true
-    end
+    before { Resque.inline = true }
+    after  { Resque.inline = false }
+
     context 'with everything' do
       it 'calls the class with the right parameters' do
         expect(RateLimitedTestQueueEn).to receive(:perform).with('test_param')
@@ -55,20 +53,14 @@ describe Resque::Plugins::RateLimited::EvernoteQueue do
     end
 
     context 'with rate limit exception' do
-      before do
-        allow(Resque::Plugins::RateLimited::EvernoteQueue).to receive(:rate_limited_requeue)
-      end
       it 'pauses queue when request fails' do
+        expect(Resque::Plugins::RateLimited::EvernoteQueue).to receive(:rate_limited_requeue)
         expect(Resque::Plugins::RateLimited::EvernoteQueue).to receive(:pause_until)
-        Resque::Plugins::RateLimited::EvernoteQueue
-          .enqueue(RateLimitedTestQueueEn, false)
+        Resque::Plugins::RateLimited::EvernoteQueue.enqueue(RateLimitedTestQueueEn, false)
       end
     end
 
     context 'with exception that is not rate limit' do
-      before do
-        allow(Resque::Plugins::RateLimited::EvernoteQueue).to receive(:rate_limited_requeue)
-      end
       it 'raises the exception when request fails' do
         expect do
           Resque::Plugins::RateLimited::EvernoteQueue.enqueue(RateLimitedTestQueueOther)

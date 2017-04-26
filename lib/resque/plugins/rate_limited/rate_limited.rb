@@ -40,7 +40,7 @@ module Resque
       end
 
       def un_pause
-        Resque.redis.renamenx(RESQUE_PREFIX + paused_queue_name, RESQUE_PREFIX + @queue.to_s)
+        Resque.redis.renamenx(prefixed(paused_queue_name), prefixed(@queue))
         true
       rescue Redis::CommandError => e
         raise unless e.message == 'ERR no such key'
@@ -48,7 +48,7 @@ module Resque
       end
 
       def pause
-        Resque.redis.renamenx(RESQUE_PREFIX + @queue.to_s, RESQUE_PREFIX + paused_queue_name)
+        Resque.redis.renamenx(prefixed(@queue), prefixed(paused_queue_name))
         true
       rescue Redis::CommandError => e
         raise unless e.message == 'ERR no such key'
@@ -59,9 +59,9 @@ module Resque
         # parameter is what to return if the queue is empty, and so the state is unknown
         if Resque.inline
           false
-        elsif Resque.redis.exists(RESQUE_PREFIX + @queue.to_s)
+        elsif Resque.redis.exists(prefixed(@queue))
           false
-        elsif Resque.redis.exists(RESQUE_PREFIX + paused_queue_name)
+        elsif Resque.redis.exists(prefixed(paused_queue_name))
           true
         else
           unknown
@@ -69,7 +69,11 @@ module Resque
       end
 
       def paused_queue_name
-        @queue.to_s + '_paused'
+        "#{@queue}_paused".to_sym
+      end
+
+      def prefixed(name)
+        "#{RESQUE_PREFIX}#{name}"
       end
 
       def with_lock

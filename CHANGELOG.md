@@ -1,7 +1,7 @@
 # Change Log
 
-## [1.2.1](https://github.com/Xenapto/resque-rate_limited/tree/1.2.1) (2017-04-26)
-[Full Changelog](https://github.com/Xenapto/resque-rate_limited/compare/v1.2.0...1.2.1)
+## [v1.2.2](https://github.com/Xenapto/resque-rate_limited/tree/v1.2.2) (2017-04-26)
+[Full Changelog](https://github.com/Xenapto/resque-rate_limited/compare/v1.2.0...v1.2.2)
 
 **Merged pull requests:**
 

@@ -3,7 +3,7 @@
 [![Gem version](https://badge.fury.io/rb/resque-rate_limited.svg)](https://rubygems.org/gems/resque-rate_limited)
 [![Gem downloads](https://img.shields.io/gem/dt/resque-rate_limited.svg)](https://rubygems.org/gems/resque-rate_limited)
 [![Build Status](https://travis-ci.org/Xenapto/resque-rate_limited.svg?branch=master)](https://travis-ci.org/Xenapto/resque-rate_limited)
-[![Code Climate](https://codeclimate.com/github/Xenapto/resque-rate_limited/badges/gpa.svg)](https://codeclimate.com/github/Xenapto/resque-rate_limited)[^1]
+[![Code Climate](https://codeclimate.com/github/Xenapto/resque-rate_limited/badges/gpa.svg)](https://codeclimate.com/github/Xenapto/resque-rate_limited)
 [![Test Coverage](https://codeclimate.com/github/Xenapto/resque-rate_limited/badges/coverage.svg)](https://codeclimate.com/github/Xenapto/resque-rate_limited/coverage)
 [![Dependency Status](https://gemnasium.com/badges/github.com/Xenapto/resque-rate_limited.svg)](https://gemnasium.com/github.com/Xenapto/resque-rate_limited)
 [![Security](https://hakiri.io/github/Xenapto/resque-rate_limited/master.svg)](https://hakiri.io/github/Xenapto/resque-rate_limited/master)
@@ -58,7 +58,7 @@ Resque::Plugins::RateLimited::UnPause.queue = :my_queue
 Please see the section below on how to unpause on heroku as an alternative. If you don't install `resque-scheduler` AND configure the queue, then the gem will not schedule unpause jobs this way.
 
 #### Workers
-Queues are paused by renaming them, so a resque queue called 'twitter\_api' will be renamed 'twitter\_api\_paused' when it hits a rate limit. Of course this will only work if your resque workers are not also taking jobs from the 'twitter\_api\_paused' queue. So your worker commands need to look like:
+Queues are paused by renaming them, so a resque queue called `twitter_api` will be renamed `twitter_api_paused` when it hits a rate limit. Of course this will only work if your resque workers are not also taking jobs from the `twitter_api_paused` queue. So your worker commands need to look like:
 
 Either
 
@@ -77,14 +77,14 @@ NOT
 bin/resque work --queues=*
 ```
 
-or NOT
+and NOT
 
 ```ruby
 env QUEUES=* bundle exec rake jobs:work
 ```
 
 #### Unpausing on heroku
-The built in schedler on heroku doesn't support dynamic scheduling from an API, so unless you want to provision an extra worker to run resque-scheduler - the best option is just to unpause all your queues on a regular basis. If they aren't paused this is a harmless no-op. If not enough time has elapsed the jobs will just hit the rate_limit and get paused again. We've found that a hourly 'rake unpause' job seems to work well. The rake task would need to call:
+The built in schedler on heroku doesn't support dynamic scheduling from an API, so unless you want to provision an extra worker to run resque-scheduler - the best option is just to unpause all your queues on a regular basis. If they aren't paused this is a harmless no-op. If not enough time has elapsed the jobs will just hit the rate_limit and get paused again. We've found that a hourly `rake unpause` job seems to work well. The rake task would need to call:
 
 ```ruby
 Resque::Plugins::RateLimited.TwitterQueue.un_pause

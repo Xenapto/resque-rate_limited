@@ -18,26 +18,14 @@ and evernote; these allow you to support rate limited apis with minimal changes.
   spec.homepage      = 'http://github.com/Xenapto/resque-rate_limited'
   spec.license       = 'MIT'
 
-  spec.files         = `git ls-files -z`.split("\x0")
-  spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
+  spec.files = `git ls-files`.split($INPUT_RECORD_SEPARATOR).reject { |f| f =~ %r{^spec/} }
+  spec.executables = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
+  spec.test_files = spec.files.grep(%r{^(test|spec|features|coverage|script)/})
   spec.require_paths = ['lib']
 
   spec.add_dependency 'resque', '~> 1.9', '>= 1.9.10'
   spec.add_dependency 'redis-mutex', '~> 4.0', '>= 4.0.0'
-
   spec.add_dependency 'angellist_api', '~> 1.0', '>= 1.0.7'
   spec.add_dependency 'evernote-thrift', '~> 1.25', '>= 1.25.1'
   spec.add_dependency 'twitter', '~> 5.11', '>= 5.11.0'
-
-  spec.add_development_dependency 'rake', '~> 10'
-  spec.add_development_dependency 'rspec', '~> 2'
-  spec.add_development_dependency 'simplecov', '~> 0'
-  spec.add_development_dependency 'rubocop', '~> 0'
-  spec.add_development_dependency 'reek', '~> 4'
-  spec.add_development_dependency 'listen', '~> 3.0', '< 3.1' # Dependency of guard, 3.1 requires Ruby 2.2+
-  spec.add_development_dependency 'guard', '~> 2'
-  spec.add_development_dependency 'guard-rspec', '~> 4'
-  spec.add_development_dependency 'guard-rubocop', '~> 1'
-  spec.add_development_dependency 'gem-release', '~> 0'
 end

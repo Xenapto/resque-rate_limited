@@ -1,9 +1,10 @@
 ---
 AllCops:
+  TargetRubyVersion: 2.0
+  DisplayCopNames: true
   Exclude:
     - 'tmp/**/*'
     - 'coverage/**/*'
-    - 'spec/dummy/**/*'
 
 #-------------------------------------------------------------------------------
 # Project standards
@@ -25,11 +26,6 @@ FileName:
   Description: 'Use snake_case for source file names.'
   Enabled: true
 
-Style/SymbolArray:
-  Description: 'Use %i or %I for arrays of symbols.'
-  StyleGuide: 'https://github.com/bbatsov/ruby-style-guide#percent-i'
-  Enabled: false # Only available in Ruby 2.0+
-
 Style/ExtraSpacing:
   Description: 'Do not use unnecessary spacing.'
   Enabled: true
@@ -38,9 +34,20 @@ Lint/LiteralInInterpolation:
   Description: 'Avoid interpolating literals in strings'
   AutoCorrect: true
 
+Style/PercentLiteralDelimiters:
+  # Hound and CodeClimate are currently using an old version of Rubocop with
+  # different defaults, so we set them explicitly here.
+  PreferredDelimiters:
+    default: ()
+    '%i': '[]'
+    '%I': '[]'
+    '%r': '{}'
+    '%w': '[]'
+    '%W': '[]'
+
 #-------------------------------------------------------------------------------
 # These rules have been relaxed because of existing code
 # We should tighten these up over time
 #-------------------------------------------------------------------------------
-LineLength:
-  Max: 166 # project standard is 120
+# LineLength:
+#   Max: 166 # project standard is 120

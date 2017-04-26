@@ -1,4 +1,12 @@
-# Resque Rate Limited
+## Resque Rate Limited
+
+[![Gem version](https://badge.fury.io/rb/resque-rate_limited.svg)](https://rubygems.org/gems/resque-rate_limited)
+[![Gem downloads](https://img.shields.io/gem/dt/resque-rate_limited.svg)](https://rubygems.org/gems/resque-rate_limited)
+[![Build Status](https://travis-ci.org/Xenapto/resque-rate_limited.svg?branch=master)](https://travis-ci.org/Xenapto/resque-rate_limited)
+[![Code Climate](https://codeclimate.com/github/Xenapto/resque-rate_limited/badges/gpa.svg)](https://codeclimate.com/github/Xenapto/resque-rate_limited)
+[![Test Coverage](https://codeclimate.com/github/Xenapto/resque-rate_limited/badges/coverage.svg)](https://codeclimate.com/github/Xenapto/resque-rate_limited/coverage)
+[![Dependency Status](https://gemnasium.com/badges/github.com/Xenapto/resque-rate_limited.svg)](https://gemnasium.com/github.com/Xenapto/resque-rate_limited)
+[![Security](https://hakiri.io/github/Xenapto/resque-rate_limited/master.svg)](https://hakiri.io/github/Xenapto/resque-rate_limited/master)
 
 A Resque plugin which makes handling jobs that use rate limited apis easier
 
@@ -205,7 +213,6 @@ Takes the parameter passed, and if it's a string class name, tries to turn it in
 
 1.0.0 First release version. Breaking change - renamed  `pause_for` to be `pause_until` to better reflect function
 
-1.1.0 Enqueues underlying job instead of directly performing it
 
 
 
